@@ -1,0 +1,16 @@
+.env
+.env.local
+data/data.json
+data/*.tmp
+logs/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+venv/
+.venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+
