@@ -11,11 +11,17 @@ import asyncio
 import sys
 
 from aiogram import Bot
-from config import BOT_TOKEN
+from aiogram.client.session.aiohttp import AiohttpSession
+from config import BOT_TOKEN, PROXY_URL
+
+
+def _make_bot() -> Bot:
+    session = AiohttpSession(proxy=PROXY_URL) if PROXY_URL else None
+    return Bot(token=BOT_TOKEN, session=session)
 
 
 async def set_webhook(url: str) -> None:
-    bot = Bot(token=BOT_TOKEN)
+    bot = _make_bot()
     await bot.set_webhook(url)
     info = await bot.get_webhook_info()
     print(f"Webhook set: {info.url}")
@@ -24,7 +30,7 @@ async def set_webhook(url: str) -> None:
 
 
 async def delete_webhook() -> None:
-    bot = Bot(token=BOT_TOKEN)
+    bot = _make_bot()
     await bot.delete_webhook()
     print("Webhook deleted. Bot is now in polling mode.")
     await bot.session.close()

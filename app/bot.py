@@ -1,17 +1,19 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
 
-from config import BOT_TOKEN, LOG_LEVEL, POLLING_TIMEOUT
+from config import BOT_TOKEN, LOG_LEVEL, POLLING_TIMEOUT, PROXY_URL
 from handlers import callbacks, common, errors, shopping, todo
 from utils.logger import setup_logger
 
 logger = setup_logger("bot", LOG_LEVEL)
 
-bot = Bot(token=BOT_TOKEN)
+_session = AiohttpSession(proxy=PROXY_URL) if PROXY_URL else None
+bot = Bot(token=BOT_TOKEN, session=_session)
 dp = Dispatcher(storage=MemoryStorage())
 
 dp.include_router(errors.router)
