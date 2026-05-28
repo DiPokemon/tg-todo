@@ -7,6 +7,8 @@ from handlers.states import EditShopState, EditTodoState
 from keyboards.inline import shopping_item_keyboard, todo_item_keyboard
 from utils.constants import MAX_TEXT_LENGTH
 from utils.formatters import format_shop_item, format_todo_item
+from keyboards.reply import MAIN_MENU
+from utils.navigation import pop as nav_pop, current as nav_current
 
 router = Router()
 
@@ -197,3 +199,33 @@ async def shop_delete_callback(call: CallbackQuery) -> None:
     await save_data(data)
     await call.message.edit_text("❌ Товар удалён")
     await call.answer("Удалено")
+
+
+# ─── Navigation: Back button ─────────────────────────────────────────────────
+
+
+@router.callback_query(F.data == "nav_back")
+async def nav_back_callback(call: CallbackQuery) -> None:
+    chat_id = str(call.message.chat.id)
+    prev = nav_pop(chat_id)
+    await call.answer()
+    # remove the message with the back button
+    try:
+        await call.message.delete()
+    except Exception:
+        pass
+
+    if prev == "todo_list":
+        from handlers.todo import _todo_list
+
+        await _todo_list(call.message)
+        return
+
+    if prev == "shop_list":
+        from handlers.shopping import _shop_list
+
+        await _shop_list(call.message)
+        return
+
+    # default: show main menu
+    await call.message.answer("Главное меню:", reply_markup=MAIN_MENU)

@@ -4,12 +4,14 @@ from datetime import datetime, timezone
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from app.validators import ShoppingItem
 from database.storage import ensure_chat, load_data, save_data
 from keyboards.inline import shopping_item_keyboard
 from utils.constants import MAX_ITEMS_PER_LIST
 from utils.formatters import format_shop_item
+from utils.navigation import push as nav_push
 
 router = Router()
 
@@ -65,6 +67,8 @@ async def _shop_add(message: Message, text: str) -> None:
 async def _shop_list(message: Message) -> None:
     data = await load_data()
     chat_id = str(message.chat.id)
+    # push navigation state
+    nav_push(chat_id, "shop_list")
     items = data.get("chats", {}).get(chat_id, {}).get("shopping", [])
 
     if not items:
@@ -75,3 +79,9 @@ async def _shop_list(message: Message) -> None:
     for item in items:
         text = format_shop_item(item)
         await message.answer(text, reply_markup=shopping_item_keyboard(item["id"]))
+
+    # add Back button
+    back_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="⬅️ Назад", callback_data="nav_back")]
+    ])
+    await message.answer("", reply_markup=back_kb)

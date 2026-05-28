@@ -7,3 +7,11 @@ class EditTodoState(StatesGroup):
 
 class EditShopState(StatesGroup):
     waiting_for_text = State()
+
+
+class AddTodoState(StatesGroup):
+    waiting_for_text = State()
+
+
+class AddShopState(StatesGroup):
+    waiting_for_text = State()
