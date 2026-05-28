@@ -27,7 +27,7 @@ async def shop_command(message: Message) -> None:
 
     if subcommand == "add":
         if len(args) < 3 or not args[2].strip():
-            await message.answer("Используйте: /shop add &lt;товар&gt;", parse_mode="HTML")
+            await message.answer("Используйте: /shop add <товар> [| дедлайн] [| стоимость]\nПример: /shop add Молоко | 2026-06-01 | 89.99", parse_mode="HTML")
             return
         await _shop_add(message, args[2].strip())
 
@@ -40,11 +40,25 @@ async def shop_command(message: Message) -> None:
 
 async def _shop_add(message: Message, text: str) -> None:
     try:
+        # parse optional fields: text | deadline | cost
+        parts = [p.strip() for p in text.split("|")]
+        text_only = parts[0]
+        deadline = parts[1] if len(parts) > 1 and parts[1] else None
+        cost = None
+        if len(parts) > 2 and parts[2]:
+            try:
+                cost = float(parts[2].replace(',', '.'))
+            except Exception:
+                await message.answer("Неверный формат стоимости. Используйте число, например: 89.99")
+                return
+
         item = ShoppingItem(
             id=str(uuid.uuid4()),
-            text=text,
+            text=text_only,
             user_id=message.from_user.id,
             created_at=datetime.now(timezone.utc).isoformat(),
+            deadline=deadline,
+            cost=cost,
         )
     except Exception as e:
         await message.answer(f"Ошибка валидации: {e}")

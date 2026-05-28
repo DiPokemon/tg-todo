@@ -29,10 +29,10 @@ def test_shopping_item_valid():
 def test_shopping_item_model_dump_keys():
     item = ShoppingItem(id="xyz", text="Молоко", user_id=2, created_at="2026-01-01T00:00:00+00:00")
     d = item.model_dump()
-    assert set(d.keys()) == {"id", "text", "status", "user_id", "created_at"}
+    assert set(d.keys()) == {"id", "text", "status", "user_id", "created_at", "deadline", "cost"}
 
 
 def test_todo_item_model_dump_keys():
     item = TodoItem(id="abc", text="Task", user_id=1, created_at="2026-01-01T00:00:00+00:00")
     d = item.model_dump()
-    assert set(d.keys()) == {"id", "text", "status", "user_id", "created_at"}
+    assert set(d.keys()) == {"id", "text", "status", "user_id", "created_at", "deadline", "cost"}

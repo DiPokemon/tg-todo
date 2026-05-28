@@ -7,6 +7,8 @@ class TodoItem(BaseModel):
     status: str = Field(default="pending")
     user_id: int
     created_at: str
+    deadline: str | None = None
+    cost: float | None = None
 
 
 class ShoppingItem(BaseModel):
@@ -15,3 +17,5 @@ class ShoppingItem(BaseModel):
     status: str = Field(default="pending")
     user_id: int
     created_at: str
+    deadline: str | None = None
+    cost: float | None = None
